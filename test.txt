@@ -1,0 +1,57 @@
+<!-- <div v-if="reponse.type <= 4">
+          <div v-if="choiceVL === 0" class="form-group">
+            <h1>Nombre d'occupants</h1>
+            <select id="type" v-model="reponse.occupation" class="form-control">
+              <option v-for="option in occupation" :key="option.id" :value="option.output">
+                {{ option.text }}
+              </option>
+            </select>
+            <button v-if="reponse.occupation" @click="nextVL" class="btn-submit">Suivant</button>
+            <button @click="backVL1" class="btn-return">retour</button>
+          </div>
+        </div> -->
+      <!-- 
+            <div v-if="choiceVL === 1">
+              <CommuneSelector v-model="reponse.origine" />
+              <button v-if="reponse.origine" @click="nextVL" class="btn-submit">Suivant</button>
+              <button @click="backVL" class="btn-return">retour</button>
+            </div>
+
+
+            <div v-if="choiceVL === 2" class="form-group">
+              <select id="type" v-model="reponse.motifOrigine" class="form-control">
+                <option v-for="option in motifOrigine" :key="option.id" :value="option.output">
+                  {{ option.text }}
+                </option>
+              </select>
+              <button v-if="reponse.motifOrigine" @click="nextVL" class="btn-submit">Suivant</button>
+              <button @click="backVL" class="btn-return">retour</button>
+            </div>
+
+            <div v-if="choiceVL === 3">
+              <CommuneSelector v-model="reponse.destination" />
+              <button v-if="reponse.destination" @click="nextVL" class="btn-submit">Suivant</button>
+              <button @click="backVL" class="btn-return">retour</button>
+            </div>
+
+            <div v-if="choiceVL === 4" class="form-group">
+              <select id="type" v-model="reponse.motifDestination" class="form-control">
+                <option v-for="option in motifDestination" :key="option.id" :value="option.output">
+                  {{ option.text }}
+                </option>
+              </select>
+              <button v-if="reponse.motifDestination" @click="nextVL" class="btn-submit">Suivant</button>
+              <button @click="backVL" class="btn-return">retour</button>
+            </div>
+
+            <div v-if="choiceVL === 5" class="form-group">
+              <select id="type" v-model="reponse.frequence" class="form-control">
+                <option v-for="option in frequence" :key="option.id" :value="option.output">
+                  {{ option.text }}
+                </option>
+              </select>
+              <button @click="backVL" class="btn-return">retour</button>
+            </div> -->
+
+
+      <!-- <input type="submit" value="Submit Survey" class="btn-fin"  /> -->
