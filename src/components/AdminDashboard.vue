@@ -61,8 +61,7 @@ const surveysByEnqueteur = ref({});
 const surveysByType = ref({});
 const totalSurveys = ref(0);
 
-const surveyCollectionRef = collection(db, "Tours");
-
+const surveyCollectionRef = collection(db, "ToursNavette");
 
 const signIn = () => {
 	if (password.value === 'admin123') {
@@ -77,6 +76,7 @@ const signIn = () => {
 const fetchAdminData = async () => {
 	try {
 		const querySnapshot = await getDocs(surveyCollectionRef);
+		console.log("Retrieved data:", querySnapshot.docs.map(doc => doc.data()));
 		const surveys = querySnapshot.docs.map(doc => doc.data());
 
 		totalSurveys.value = surveys.length;
@@ -86,11 +86,24 @@ const fetchAdminData = async () => {
 			return acc;
 		}, {});
 
-		surveysByType.value = surveys.reduce((acc, survey) => {
-			const type = survey.TYPE_QUESTIONNAIRE === 'Passager' ? 'Passager' : 'Non-passager';
+		const typeQ1Count = surveys.reduce((acc, survey) => {
+			const type = survey.Q1 === 4 ? 'Pas de titre' : 'Titre de transport';
 			acc[type] = (acc[type] || 0) + 1;
 			return acc;
 		}, {});
+
+		const typeQ2Count = surveys.reduce((acc, survey) => {
+			const type = survey.Q2 === 1 ? 'Correspondance' : 'Pas de Correspondance';
+			acc[type] = (acc[type] || 0) + 1;
+			return acc;
+		}, {});
+
+		surveysByType.value = {
+			'Titre de transport': typeQ1Count['Titre de transport'] || 0,
+			'Pas de titre': typeQ1Count['Pas de titre'] || 0,
+			'Correspondance': typeQ2Count['Correspondance'] || 0,
+			'Pas de Correspondance': typeQ2Count['Pas de Correspondance'] || 0
+		};
 	} catch (error) {
 		console.error("Erreur lors de la récupération des données :", error);
 	}
@@ -107,7 +120,6 @@ const downloadData = async () => {
       'JOUR',
       'HEURE_DEBUT',
       'HEURE_FIN',
-      'TYPE_QUESTIONNAIRE',
       ...questions.map(q => q.id)
     ];
 
@@ -121,7 +133,6 @@ const downloadData = async () => {
           case 'JOUR':
           case 'HEURE_DEBUT':
           case 'HEURE_FIN':
-          case 'TYPE_QUESTIONNAIRE':
             acc[key] = docData[key] || '';
             break;
           default:

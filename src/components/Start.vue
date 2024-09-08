@@ -87,15 +87,14 @@ const isSurveyorSaved = ref(false);
 const isSurveyComplete = ref(false);
 
 // Configuration (customize these for each survey)
-const surveyTitle = ref('Your Survey Title');
 const startMessage = ref("Bonjour, je suis mandaté par SNCF Voyageurs – Axe TGV Atlantique pour réaliser une enquête, de très courte durée, sur l'utilisation de la « Navette Tours » - St -Pierre - des - Corps.");
 const completionMessage = ref('Merci pour votre réponse et bonne journée.');
 const logoUrl = ref(logoImage);
 const questionsData = ref(questions);
 
 // Firestore refs (update collection name as needed)
-const surveyCollectionRef = collection(db, "YourSurveyCollection");
-const counterDocRef = doc(db, "counters", "surveyCounter");
+const surveyCollectionRef = collection(db, "ToursNavette");
+const counterDocRef = doc(db, "countersTour", "surveyCounter");
 
 // Computed properties
 const currentQuestion = computed(() => {
@@ -194,12 +193,12 @@ const finishSurvey = async () => {
   const uniqueId = await getNextId();
 
   await addDoc(surveyCollectionRef, {
-    ID_survey: uniqueId,
-    START_TIME: startDate.value,
-    DATE: now.toLocaleDateString("en-US").replace(/\//g, "-"),
-    DAY: now.toLocaleDateString("en-US", { weekday: 'long' }),
-    SURVEYOR: surveyor.value,
-    END_TIME: now.toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+    ID_questionnaire: uniqueId,
+	HEURE_DEBUT: startDate.value,
+    DATE: now.toLocaleDateString("fr-FR").replace(/\//g, "-"),
+    JOUR: now.toLocaleDateString("fr-FR", { weekday: 'long' }),
+    ENQUETEUR: surveyor.value,
+    HEURE_FIN: now.toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
     ...answers.value
   });
 
