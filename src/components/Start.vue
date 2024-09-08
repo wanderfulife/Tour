@@ -15,7 +15,8 @@
 
 			<!-- Start Survey Step -->
 			<div v-else-if="currentStep === 'start'" class="start-survey-container">
-				<h2>{{ startMessage }}</h2>
+				<h2>Bonjour,<br> je suis mandaté par SNCF Voyageurs <br> Axe TGV Atlantique pour réaliser une enquête,<br> de très
+					courte durée,<br> sur l'utilisation de la « Navette Tours » <br> St-Pierre-des-Corps.</h2>
 				<button @click="startSurvey" class="btn-next">START SURVEY</button>
 			</div>
 
