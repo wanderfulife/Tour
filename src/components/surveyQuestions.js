@@ -10,7 +10,14 @@ export const questions = [
 			},
 			{ text: "Un titre de transport « Fil Bleu »", next: "Q2" },
 			{ text: "Aucun titre de transport", next: "Q2" },
+			{ text: "Autre", next: "Q1_precision" },
 		],
+	},
+	{
+		id: "Q1_precision",
+		text: "Veuillez préciser votre titre de transport :",
+		freeText: true,
+		next: "Q2",
 	},
 	{
 		id: "Q2",
@@ -21,3 +28,4 @@ export const questions = [
 		],
 	},
 ];
+

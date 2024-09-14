@@ -76,7 +76,6 @@ const signIn = () => {
 const fetchAdminData = async () => {
 	try {
 		const querySnapshot = await getDocs(surveyCollectionRef);
-		console.log("Retrieved data:", querySnapshot.docs.map(doc => doc.data()));
 		const surveys = querySnapshot.docs.map(doc => doc.data());
 
 		totalSurveys.value = surveys.length;
@@ -113,6 +112,11 @@ const downloadData = async () => {
   try {
     const querySnapshot = await getDocs(surveyCollectionRef);
 
+    // Check if questions array is defined and not empty
+    if (!Array.isArray(questions) || questions.length === 0) {
+      throw new Error("Questions array is not properly defined");
+    }
+
     const headerOrder = [
       'ID_questionnaire',
       'ENQUETEUR',
@@ -144,10 +148,13 @@ const downloadData = async () => {
                 acc[`${key}_CODE_INSEE`] = docData[`${key}_CODE_INSEE`] || '';
               } else if (question.type === 'text') {
                 acc[key] = docData[key] || '';
-              } else {
+              } else if (Array.isArray(question.options)) {
                 // For options questions
                 const option = question.options.find(opt => opt.value === docData[key]);
                 acc[key] = option ? option.text : (docData[key] || '');
+              } else {
+                // Fallback for unknown question types
+                acc[key] = docData[key] || '';
               }
             } else {
               acc[key] = docData[key] || '';
