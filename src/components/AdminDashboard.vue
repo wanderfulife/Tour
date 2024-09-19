@@ -112,7 +112,6 @@ const downloadData = async () => {
   try {
     const querySnapshot = await getDocs(surveyCollectionRef);
 
-    // Check if questions array is defined and not empty
     if (!Array.isArray(questions) || questions.length === 0) {
       throw new Error("Questions array is not properly defined");
     }
@@ -130,35 +129,28 @@ const downloadData = async () => {
     const data = querySnapshot.docs.map(doc => {
       const docData = doc.data();
       return headerOrder.reduce((acc, key) => {
-        switch (key) {
-          case 'ID_questionnaire':
-          case 'ENQUETEUR':
-          case 'DATE':
-          case 'JOUR':
-          case 'HEURE_DEBUT':
-          case 'HEURE_FIN':
-            acc[key] = docData[key] || '';
-            break;
-          default:
-            const question = questions.find(q => q.id === key);
-            if (question) {
-              if (question.type === 'commune' || question.type === 'station') {
-                acc[key] = docData[key] || '';
-                acc[`${key}_COMMUNE`] = docData[`${key}_COMMUNE`] || '';
-                acc[`${key}_CODE_INSEE`] = docData[`${key}_CODE_INSEE`] || '';
-              } else if (question.type === 'text') {
-                acc[key] = docData[key] || '';
-              } else if (Array.isArray(question.options)) {
-                // For options questions
-                const option = question.options.find(opt => opt.value === docData[key]);
-                acc[key] = option ? option.text : (docData[key] || '');
-              } else {
-                // Fallback for unknown question types
-                acc[key] = docData[key] || '';
-              }
+        if (['ID_questionnaire', 'ENQUETEUR', 'DATE', 'JOUR', 'HEURE_DEBUT', 'HEURE_FIN'].includes(key)) {
+          acc[key] = docData[key] || '';
+        } else {
+          const question = questions.find(q => q.id === key);
+          if (question) {
+            if (question.type === 'commune' || question.type === 'station') {
+              acc[key] = docData[key] || '';
+              acc[`${key}_COMMUNE`] = docData[`${key}_COMMUNE`] || '';
+              acc[`${key}_CODE_INSEE`] = docData[`${key}_CODE_INSEE`] || '';
+            } else if (question.type === 'text' || question.freeText) {
+              acc[key] = docData[key] || '';
+            } else if (Array.isArray(question.options)) {
+              const optionIndex = question.options.findIndex(opt => 
+                opt.text === docData[key] || opt.value === docData[key]
+              );
+              acc[key] = optionIndex !== -1 ? optionIndex + 1 : docData[key];
             } else {
               acc[key] = docData[key] || '';
             }
+          } else {
+            acc[key] = docData[key] || '';
+          }
         }
         return acc;
       }, {});
@@ -173,7 +165,6 @@ const downloadData = async () => {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Survey Data");
 
-    // Use a timestamp in the filename to avoid overwriting
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     XLSX.writeFile(workbook, `Survey_Data_${timestamp}.xlsx`);
 
@@ -182,6 +173,82 @@ const downloadData = async () => {
     console.error("Error downloading data:", error);
   }
 };
+
+
+// const downloadData = async () => {
+//   try {
+//     const querySnapshot = await getDocs(surveyCollectionRef);
+
+//     // Check if questions array is defined and not empty
+//     if (!Array.isArray(questions) || questions.length === 0) {
+//       throw new Error("Questions array is not properly defined");
+//     }
+
+//     const headerOrder = [
+//       'ID_questionnaire',
+//       'ENQUETEUR',
+//       'DATE',
+//       'JOUR',
+//       'HEURE_DEBUT',
+//       'HEURE_FIN',
+//       ...questions.map(q => q.id)
+//     ];
+
+//     const data = querySnapshot.docs.map(doc => {
+//       const docData = doc.data();
+//       return headerOrder.reduce((acc, key) => {
+//         switch (key) {
+//           case 'ID_questionnaire':
+//           case 'ENQUETEUR':
+//           case 'DATE':
+//           case 'JOUR':
+//           case 'HEURE_DEBUT':
+//           case 'HEURE_FIN':
+//             acc[key] = docData[key] || '';
+//             break;
+//           default:
+//             const question = questions.find(q => q.id === key);
+//             if (question) {
+//               if (question.type === 'commune' || question.type === 'station') {
+//                 acc[key] = docData[key] || '';
+//                 acc[`${key}_COMMUNE`] = docData[`${key}_COMMUNE`] || '';
+//                 acc[`${key}_CODE_INSEE`] = docData[`${key}_CODE_INSEE`] || '';
+//               } else if (question.type === 'text') {
+//                 acc[key] = docData[key] || '';
+//               } else if (Array.isArray(question.options)) {
+//                 // For options questions
+//                 const option = question.options.find(opt => opt.value === docData[key]);
+//                 acc[key] = option ? option.text : (docData[key] || '');
+//               } else {
+//                 // Fallback for unknown question types
+//                 acc[key] = docData[key] || '';
+//               }
+//             } else {
+//               acc[key] = docData[key] || '';
+//             }
+//         }
+//         return acc;
+//       }, {});
+//     });
+
+//     const worksheet = XLSX.utils.json_to_sheet(data, { header: headerOrder });
+
+//     // Set column widths
+//     const colWidths = headerOrder.map(() => ({ wch: 20 }));
+//     worksheet['!cols'] = colWidths;
+
+//     const workbook = XLSX.utils.book_new();
+//     XLSX.utils.book_append_sheet(workbook, worksheet, "Survey Data");
+
+//     // Use a timestamp in the filename to avoid overwriting
+//     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+//     XLSX.writeFile(workbook, `Survey_Data_${timestamp}.xlsx`);
+
+//     console.log("File downloaded successfully");
+//   } catch (error) {
+//     console.error("Error downloading data:", error);
+//   }
+// };
 
 onMounted(() => {
 	// Initialization logic if needed
