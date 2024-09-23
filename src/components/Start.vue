@@ -61,7 +61,6 @@
 		<!-- Footer -->
 		<div class="footer">
 			<AdminDashboard />
-			<div class="doc-count">Nombre de questionnaires: {{ docCount }}</div>
 		</div>
 	</div>
 </template>
